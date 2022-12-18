@@ -1,23 +1,142 @@
-import logo from './logo.svg';
-import './App.css';
-
+import "./App.css";
+import { useState ,useEffect } from "react";
+import Square from "./components/Square";
+import { Patterns } from "./Patterns";
 function App() {
-  return (
+    const [board,setBoard]=useState(["", "", "", "", "", "", "", "", ""]);
+   const [player,setPlayer] =useState("O");
+   const [result,setResult]=useState({winner:"none" ,state:"none"})
+  useEffect(()=>{
+    checkIfTie();
+  checkWin();  
+ 
+  if(player=== "X"){
+    setPlayer("O");
+  }
+  else{
+    setPlayer("X");
+  }
+  },[board]);
+
+
+  useEffect(()=>{
+    if(result.state !== "none"){
+      alert(`Game Finished! Winning Player:${result.winner}`);
+    restartGame();
+    }
+  },[result])
+   const chooseSquare=(square) =>{
+  setBoard(board.map((val,idx)=>{
+    if(idx === square && val!==""){
+      setPlayer((prev)=>{
+          if(prev==="X") return "O"; 
+          else
+          {return "X"}})
+   } 
+    if(idx===square && val===""){
+      return player;
+    }
+    return val;
+  })
+  );
+   };
+// to check the winner
+const checkWin=()=>{
+  Patterns.forEach((currPattern)=>{
+    const firstPlayer =board[currPattern[0]];
+    if(firstPlayer==="") return;
+    let fountWinningPattern=true;
+    currPattern.forEach((idx)=>{
+      if(board[idx]!== firstPlayer){
+         fountWinningPattern=false
+      }
+    });
+    if(fountWinningPattern){
+ setResult({winner: player, state: "Won"});
+    }
+  });
+};
+
+const checkIfTie=()=>{
+  let filled=true;
+  board.forEach((square)=>{
+    if(square===""){
+      filled=false;
+    }
+  })
+  if(filled){
+    setResult({winner:"No One ",state:"Tie"});
+  }
+};
+const restartGame=()=>{
+setBoard(["", "", "", "", "", "", "", "", ""]);
+setPlayer("O");
+}
+
+    return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="board">
+  <div className="row">
+    <Square 
+    val={board[0]} 
+    chooseSquare={()=>
+      {chooseSquare(0);
+      }}
+      />
+    <Square 
+    val={board[1]} 
+    chooseSquare={()=>
+      {chooseSquare(1);
+      }}
+    />
+    <Square 
+    val={board[2]} 
+    chooseSquare={()=>
+      {chooseSquare(2);
+      }}
+    />
+  </div>
+  <div className="row">
+  <Square 
+    val={board[3]} 
+    chooseSquare={()=>
+      {chooseSquare(3);
+      }}
+      />
+    <Square 
+    val={board[4]} 
+    chooseSquare={()=>
+      {chooseSquare(4);
+      }}
+    />
+    <Square 
+    val={board[5]} 
+    chooseSquare={()=>
+      {chooseSquare(5);
+      }}
+    />
+  </div>
+  <div className="row">
+  <Square 
+    val={board[6]} 
+    chooseSquare={()=>
+      {chooseSquare(6);
+      }}
+      />
+    <Square 
+    val={board[7]} 
+    chooseSquare={()=>
+      {chooseSquare(7);
+      }}
+    />
+    <Square 
+    val={board[8]} 
+    chooseSquare={()=>
+      {chooseSquare(8);
+      }}
+    />
+  </div>
+    </div>
     </div>
   );
 }
